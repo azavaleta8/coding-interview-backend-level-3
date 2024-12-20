@@ -1,2 +1,4 @@
 node_modules
 mock.ts
+package-lock.json
+dist
