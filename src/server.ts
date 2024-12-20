@@ -14,7 +14,7 @@ mongoose.set('strictQuery', false);
 // ENV variables configuration
 const NODE_ENV: string = process.env.NODE_ENV || 'dev';
 const PORT: number = parseInt(process.env.PORT || '3000', 10);
-const HOST: string = process.env.RENDER_EXTERNAL_URL || 'localhost';
+const HOST: string = process.env.RENDER_EXTERNAL_HOSTNAME || 'localhost';
 const MONGODB_URI: string | undefined = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {

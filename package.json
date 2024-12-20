@@ -9,7 +9,7 @@
     "build": "tsc",
     "lint": "eslint --fix src",
     "test": "jest --verbose e2e",
-    "deploy": "npm i && tsc && npm run start"
+    "deploy": "npm i && tsc"
   },
   "author": "El Dorado Dev Team",
   "license": "ISC",
