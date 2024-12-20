@@ -12,7 +12,7 @@ export default tseslint.config(
       '@stylistic/ts': stylisticTs
     },
     rules: {
-      '@stylistic/ts/indent': ['error', 2],
+      '@stylistic/ts/indent': ['error', 4],
     },
     ignores: ['node_modules', 'dist', 'e2e'],
   }

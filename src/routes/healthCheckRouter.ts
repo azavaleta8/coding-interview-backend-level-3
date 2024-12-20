@@ -5,7 +5,7 @@ const healthCheckRouter = express.Router();
 
 /**
  * @swagger
- * /api/ping:
+ * /ping:
  *   get:
  *     summary: Perform a health check on the API
  *     tags:
@@ -23,16 +23,13 @@ const healthCheckRouter = express.Router();
  *                   example: 200
  *                 message:
  *                   type: string
- *                   example: "API - 👋🌎🌍🌏"
+ *                   example: "ok: true"
  */
 healthCheckRouter.get('/ping', (_req: Request, res: Response) => {
-  // Creating success response object
-  const response = {
-    status: StatusCodes.OK,
-    message: 'API - 👋🌎🌍🌏',
-  };
+    // Creating success response object
+    const response = { ok: true };
 
-  res.status(StatusCodes.OK).send(response); // Sending success response
+    res.status(StatusCodes.OK).send(response); // Sending success response
 });
 
 export default healthCheckRouter;

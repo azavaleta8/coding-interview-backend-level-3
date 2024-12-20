@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import createApp from './config/app';
+import Hapi, { Server } from '@hapi/hapi';
+import { hapiToExpressHelper } from './utils/hapiToExpressHelper';
+import { Response } from 'supertest';
 
 // ENV
 dotenv.config();
@@ -46,4 +49,51 @@ export const startServer = async (): Promise<void> => {
     console.error('Error starting the server:', error);
     process.exit(1);
   }
+};
+
+/**
+ * Initializes the Hapi server and sets up a proxy middleware to forward requests to an Express server.
+ * 
+ * @returns {Promise<Hapi.Server>} A promise that resolves to the initialized Hapi server.
+
+ * This function creates an Express application and starts an Express server on the specified HOST and PORT.
+ * It then creates a Hapi server on a different port (PORT + 1) and sets up a route to proxy all requests
+ * to the Express server using the `hapiToExpressHelper` function.
+ * 
+ */
+export const initializeServer = async (): Promise<Hapi.Server> => {
+    const expressApp = await createApp();
+    expressApp.listen(PORT, HOST, () => {
+        console.log(`Express server running on http://${HOST}:${PORT}`);
+    });
+
+    const server : Server = Hapi.server({
+        port: PORT,
+        host: HOST,
+    });
+
+    // Proxy middleware
+    server.route({
+      method: '*',
+      path: '/{any*}',
+      handler: async (request, h) => {
+        try {
+          // Usar Supertest para realizar la solicitud al API Express
+          const method = request.method.toLowerCase();
+          const url = request.path.toString();
+          const payload = request.payload as object;
+
+          const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
+
+          return h.response(response.body).code(response.status);
+        } catch (error) {
+
+          console.error('Error handling request:', error);
+          return h.response({ error: 'Internal Server Error' }).code(500);
+          
+        }
+      },
+    });
+
+    return server;
 };

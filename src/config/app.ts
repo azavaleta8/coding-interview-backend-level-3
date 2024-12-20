@@ -23,7 +23,7 @@ const createApp = (): Application => {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
   // Routes
-  app.use('/api', healthCheckRouter);
+  app.use('', healthCheckRouter);
 
   // Root route
   app.get('/', (req: Request, res: Response) => {
