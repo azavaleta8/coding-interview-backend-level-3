@@ -9,6 +9,16 @@ import { apiLimiter } from './rateLimit';
 
 import healthCheckRouter from '../routes/healthCheckRouter';
 
+/**
+ * Creates and configures an Express application.
+ *
+ * This function sets up middleware for JSON parsing, logging, CORS, and rate limiting.
+ * It also configures Swagger for API documentation and sets up the health check route.
+ * Additionally, it defines a root route that returns a JSON message indicating the API is running.
+ * Error handling middleware for 404 and general errors are also included.
+ *
+ * @returns {Application} The configured Express application.
+ */
 const createApp = (): Application => {
     const app: Application = express();
 

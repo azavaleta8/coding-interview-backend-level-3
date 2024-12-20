@@ -22,7 +22,14 @@ if (!MONGODB_URI) {
     process.exit(1);
 }
 
-// Connect to MongoDB
+/**
+ * Connects to the MongoDB database using the provided URI.
+ * 
+ * @param {boolean} [test=false] - A flag indicating whether the connection is for testing purposes. 
+ *                                 If true, no success message will be logged.
+ * @returns {Promise<void>} - A promise that resolves when the connection is established.
+ * @throws Will log an error message and exit the process if the connection fails.
+ */
 const connectToDatabase = async (test = false): Promise<void> => {
     try {
         await mongoose.connect(MONGODB_URI);
@@ -35,7 +42,15 @@ const connectToDatabase = async (test = false): Promise<void> => {
     }
 };
 
-// Start API server
+/**
+ * Starts the server by connecting to the database, creating the application,
+ * and listening on the specified host and port.
+ *
+ * @async
+ * @function
+ * @returns {Promise<void>} A promise that resolves when the server has started successfully.
+ * @throws Will throw an error if there is an issue starting the server.
+ */
 export const startServer = async (): Promise<void> => {
     try {
         await connectToDatabase();
@@ -56,44 +71,49 @@ export const startServer = async (): Promise<void> => {
  * 
  * @returns {Promise<Hapi.Server>} A promise that resolves to the initialized Hapi server.
 
- * This function creates an Express application and starts an Express server on the specified HOST and PORT.
- * It then creates a Hapi server on a different port (PORT + 1) and sets up a route to proxy all requests
+ * This function creates an Express application and starts an Express server.
+ * It then creates a Hapi server and sets up a route to proxy all requests
  * to the Express server using the `hapiToExpressHelper` function.
  * 
  */
 export const initializeServer = async (): Promise<Hapi.Server> => {
+    // Create and start the Express application
     const expressApp = await createApp();
-    expressApp.listen(PORT, HOST, () => {
-        console.log(`Express server running on http://${HOST}:${PORT}`);
-    });
+    expressApp.listen(PORT, HOST, () => {});
 
-    const server : Server = Hapi.server({
+    // Connect to the MongoDB database
+    await connectToDatabase(true);
+
+    // Create a new Hapi server
+    const server: Server = Hapi.server({
         port: PORT,
         host: HOST,
     });
 
-    // Proxy middleware
+    // Proxy middleware to forward requests from Hapi to Express
     server.route({
-        method: '*',
-        path: '/{any*}',
+        method: '*', // Match all HTTP methods
+        path: '/{any*}', // Match all routes
         handler: async (request, h) => {
             try {
-                // Usar Supertest para realizar la solicitud al API Express
+                // Extract method, URL, and payload from the Hapi request
                 const method = request.method.toLowerCase();
                 const url = request.path.toString();
                 const payload = request.payload as object;
 
+                // Use Supertest to make the request to the Express API
                 const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
 
+                // Return the response from Express to the Hapi client
                 return h.response(response.body).code(response.status);
             } catch (error) {
-
+                // Log the error and return a 500 Internal Server Error response
                 console.error('Error handling request:', error);
                 return h.response({ error: 'Internal Server Error' }).code(500);
-          
             }
         },
     });
 
+    // Return the initialized Hapi server
     return server;
 };

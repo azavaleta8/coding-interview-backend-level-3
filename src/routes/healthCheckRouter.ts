@@ -27,7 +27,9 @@ const healthCheckRouter = express.Router();
  */
 healthCheckRouter.get('/ping', (_req: Request, res: Response) => {
     // Creating success response object
-    const response = { ok: true };
+    const response = { 
+        ok: true 
+    };
 
     res.status(StatusCodes.OK).send(response); // Sending success response
 });
