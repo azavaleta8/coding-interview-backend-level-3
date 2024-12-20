@@ -18,37 +18,37 @@ const HOST: string = process.env.RENDER_EXTERNAL_URL || 'localhost';
 const MONGODB_URI: string | undefined = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  console.error('Error: MONGODB_URI is not defined.');
-  process.exit(1);
+    console.error('Error: MONGODB_URI is not defined.');
+    process.exit(1);
 }
 
 // Connect to MongoDB
 const connectToDatabase = async (test = false): Promise<void> => {
-  try {
-    await mongoose.connect(MONGODB_URI);
-    if(!test){
-      console.log('MongoDB initialized successfully:', mongoose.connection.host);
+    try {
+        await mongoose.connect(MONGODB_URI);
+        if(!test){
+            console.log('MongoDB initialized successfully:', mongoose.connection.host);
+        }
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+        process.exit(1);
     }
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    process.exit(1);
-  }
 };
 
 // Start API server
 export const startServer = async (): Promise<void> => {
-  try {
-    await connectToDatabase();
+    try {
+        await connectToDatabase();
 
-    const app = await createApp();
-    app.listen(PORT, HOST, () => {
-      console.log(`Server running on http://${HOST}:${PORT} in ${NODE_ENV} mode`);
-      console.log(`Swagger docs are available at  http://${HOST}:${PORT}/api-docs`);
-    });
-  } catch (error) {
-    console.error('Error starting the server:', error);
-    process.exit(1);
-  }
+        const app = await createApp();
+        app.listen(PORT, HOST, () => {
+            console.log(`Server running on http://${HOST}:${PORT} in ${NODE_ENV} mode`);
+            console.log(`Swagger docs are available at  http://${HOST}:${PORT}/api-docs`);
+        });
+    } catch (error) {
+        console.error('Error starting the server:', error);
+        process.exit(1);
+    }
 };
 
 /**
@@ -74,25 +74,25 @@ export const initializeServer = async (): Promise<Hapi.Server> => {
 
     // Proxy middleware
     server.route({
-      method: '*',
-      path: '/{any*}',
-      handler: async (request, h) => {
-        try {
-          // Usar Supertest para realizar la solicitud al API Express
-          const method = request.method.toLowerCase();
-          const url = request.path.toString();
-          const payload = request.payload as object;
+        method: '*',
+        path: '/{any*}',
+        handler: async (request, h) => {
+            try {
+                // Usar Supertest para realizar la solicitud al API Express
+                const method = request.method.toLowerCase();
+                const url = request.path.toString();
+                const payload = request.payload as object;
 
-          const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
+                const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
 
-          return h.response(response.body).code(response.status);
-        } catch (error) {
+                return h.response(response.body).code(response.status);
+            } catch (error) {
 
-          console.error('Error handling request:', error);
-          return h.response({ error: 'Internal Server Error' }).code(500);
+                console.error('Error handling request:', error);
+                return h.response({ error: 'Internal Server Error' }).code(500);
           
-        }
-      },
+            }
+        },
     });
 
     return server;
