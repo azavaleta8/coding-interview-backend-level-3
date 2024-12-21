@@ -1,6 +1,6 @@
 import express from 'express';
-import { createItemController } from '../controllers/itemController';
-import { validatePOST } from '../validators/itemValidation';
+import { createItemController, getItemByIdController } from '../controllers/itemController';
+import { validateItemId, validatePOST } from '../validators/itemValidation';
 
 const router = express.Router();
 
@@ -35,6 +35,28 @@ const router = express.Router();
  *         description: Unprocessable Entity
  */
 router.post('/items', validatePOST, createItemController);
+
+/**
+ * @swagger
+ * /items/{id}:
+ *   get:
+ *     summary: Get item by ID
+ *     tags: [Items]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Item details
+ *       404:
+ *         description: Item not found
+ *       422:
+ *         description: Unprocessable Entity
+ */
+router.get('/items/:id', validateItemId, getItemByIdController);
 
 
 export default router;

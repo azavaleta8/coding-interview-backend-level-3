@@ -28,4 +28,19 @@ export const ItemService = {
         return sanitizeResponse(newItem);
     },
 
+    /**
+     * Retrieves an item by its ID.
+     *
+     * @param {string} id - The ID of the item to retrieve.
+     * @returns {Promise<Item>} The item corresponding to the provided ID.
+     * @throws {Error} If the item is not found.
+     */
+    async getItemById(id : string) {
+		const item = await ItemModel.findById(id);
+		if (!item) {
+			throw new Error('Item not found');
+		}
+		return sanitizeResponse(item);
+	},
+
 }
