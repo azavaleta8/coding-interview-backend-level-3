@@ -3,12 +3,12 @@ import { ItemModel } from "../models/Item";
 
 
 function sanitizeResponse(item : Item) {
-	const {
-		_id, name, price,
-	} = item;
-	return {
-		id: _id, name, price
-	};
+    const {
+        _id, name, price,
+    } = item;
+    return {
+        id: _id, name, price
+    };
 }
 
 

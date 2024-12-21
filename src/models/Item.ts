@@ -4,7 +4,7 @@ import { Item } from '../types/ItemType';
 
 
 // Define the schema for the Item model
-const itemSchema: Schema<Item> = new Schema({
+const itemSchema = new Schema<Item>({
     _id: {
         type: Number
     },

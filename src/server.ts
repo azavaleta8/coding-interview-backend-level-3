@@ -57,14 +57,14 @@ export const startServer = async (): Promise<void> => {
 
         const app = await createApp();
         app.listen(PORT, () => {
-			if (NODE_ENV === 'production') {
+            if (NODE_ENV === 'production') {
                 console.log(`Server running on ${HOST} in ${NODE_ENV} mode`);
-				console.log(`Swagger docs are available at ${HOST}/api-docs`);
-			} else {
-				console.log(`Server running on http://${HOST}:${PORT} in ${NODE_ENV} mode`);
-				console.log(`Swagger docs are available at http://${HOST}:${PORT}/api-docs`);
-			}
-		});
+                console.log(`Swagger docs are available at ${HOST}/api-docs`);
+            } else {
+                console.log(`Server running on http://${HOST}:${PORT} in ${NODE_ENV} mode`);
+                console.log(`Swagger docs are available at http://${HOST}:${PORT}/api-docs`);
+            }
+        });
     } catch (error) {
         console.error('Error starting the server:', error);
         process.exit(1);

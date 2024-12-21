@@ -16,10 +16,10 @@ import { ItemService } from '../services/ItemService';
  * @returns A promise that resolves to void.
  */
 export const createItemController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const item = await ItemService.createItem(req.body);
-    res.status(StatusCodes.CREATED).json(item);
-  } catch (error) {
-    next(error);
-  }
+    try {
+        const item = await ItemService.createItem(req.body);
+        res.status(StatusCodes.CREATED).json(item);
+    } catch (error) {
+        next(error);
+    }
 };
