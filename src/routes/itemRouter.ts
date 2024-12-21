@@ -1,6 +1,6 @@
 import express from 'express';
 import { createItemController } from '../controllers/itemController';
-// const { validatePOST } = require('../validators/itemValidation');
+import { validatePOST } from '../validators/itemValidation';
 
 const router = express.Router();
 
@@ -34,7 +34,7 @@ const router = express.Router();
  *       422:
  *         description: Unprocessable Entity
  */
-router.post('/items', createItemController);
+router.post('/items', validatePOST, createItemController);
 
 
 export default router;
