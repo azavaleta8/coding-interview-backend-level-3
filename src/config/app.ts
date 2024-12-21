@@ -8,6 +8,7 @@ import { notFoundMiddleware, errorHandlerMiddleware } from '../middlewares/error
 import { apiLimiter } from './rateLimit';
 
 import healthCheckRouter from '../routes/healthCheckRouter';
+import itemRouter from '../routes/itemRouter';
 
 /**
  * Creates and configures an Express application.
@@ -34,6 +35,7 @@ const createApp = (): Application => {
 
     // Routes
     app.use('', healthCheckRouter);
+    app.use('', itemRouter)
 
     // Root route
     app.get('/', (req: Request, res: Response) => {

@@ -1,18 +1,12 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
-import AutoIncrementID from 'mongoose-sequence';
+const AutoIncrement = require('mongoose-sequence')(mongoose);
+import { Item } from '../types/ItemType';
 
-// Define the interface for the Item document
-interface Item extends Document {
-    _id: number;
-    name: string;
-    price: number;
-}
 
 // Define the schema for the Item model
 const itemSchema: Schema<Item> = new Schema({
     _id: {
-        type: Number,
-        unique: true,
+        type: Number
     },
     name: {
         type: String,
@@ -27,7 +21,7 @@ const itemSchema: Schema<Item> = new Schema({
 }, { timestamps: true });
 
 // Apply the auto-increment plugin to the schema
-itemSchema.plugin(AutoIncrementID, { field: '_id' });
+itemSchema.plugin(AutoIncrement);
 
 // Create the Item model
-export const Item: Model<Item> = mongoose.model<Item>('Item', itemSchema);
+export const ItemModel: Model<Item> = mongoose.model<Item>('Item', itemSchema);
