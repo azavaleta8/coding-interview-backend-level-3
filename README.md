@@ -122,3 +122,8 @@ Endpoints principales:
 - Uso de async/await para manejar operaciones asincronas.
 - Implementacion de logging para facilitar el debugging y monitoreo.
 - Uso de ESLint para mantener un estilo de codigo consistente.
+
+## Comentarios adicionales
+
+- Con el fin de mantener la integridad del archivo e2e y no modificarlo. Implemente un funcionalidad para mockear las peticiones provenientes de happi server al servidor de express.
+- Timpo total empleado 18h
