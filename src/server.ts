@@ -18,8 +18,9 @@ const NODE_ENV: string = process.env.NODE_ENV || 'dev';
 const PORT: number = parseInt(process.env.PORT || '3000', 10);
 const HOST: string = process.env.RENDER_EXTERNAL_URL || 'localhost';
 const MONGODB_URI: string | undefined = process.env.MONGODB_URI;
+const MONGODB_URI_TEST: string | undefined = process.env.MONGODB_URI_TEST;
 
-if (!MONGODB_URI) {
+if (!MONGODB_URI || !MONGODB_URI_TEST) {
     console.error('Error: MONGODB_URI is not defined.');
     process.exit(1);
 }
@@ -34,13 +35,29 @@ if (!MONGODB_URI) {
  */
 const connectToDatabase = async (test = false): Promise<void> => {
     try {
-        await mongoose.connect(MONGODB_URI);
-        if(!test){
-            console.log('MongoDB initialized successfully:', mongoose.connection.host);
-        }
+		if(test){
+			await mongoose.connect(MONGODB_URI_TEST);
+		}else{
+			await mongoose.connect(MONGODB_URI);
+			console.log('MongoDB initialized successfully:', mongoose.connection.host);
+		}
+
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
         process.exit(1);
+    }
+};
+
+/**
+ * Cleans the MongoDB database by dropping all collections.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the database is cleaned.
+ */
+const cleanDatabase = async (): Promise<void> => {
+    const collections = mongoose.connection.collections;
+    for (const key in collections) {
+        const collection = collections[key];
+        await collection.deleteMany({});
     }
 };
 
@@ -93,22 +110,25 @@ export const initializeServer = async (): Promise<Hapi.Server> => {
   // Close existing servers if they are running
   if (expressServer) {
     expressServer.close(() => {
-      console.log('Existing Express server closed.');
+      // console.log('Existing Express server closed.');
     });
   }
   if (hapiServer) {
     await hapiServer.stop();
-    console.log('Existing Hapi server stopped.');
+    // console.log('Existing Hapi server stopped.');
   }
 
   // Create and start the Express application
   const expressApp = createApp();
   expressServer = expressApp.listen(PORT, HOST, () => {
-    console.log(`Express server running on http://${HOST}:${PORT}`);
+    // console.log(`Express server running on http://${HOST}:${PORT}`);
   });
 
   // Connect to the MongoDB database
   await connectToDatabase(true);
+
+  // Clean the database before running tests
+  await cleanDatabase();
 
   // Create a new Hapi server
   hapiServer = Hapi.server({
