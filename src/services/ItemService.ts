@@ -43,4 +43,17 @@ export const ItemService = {
 		return sanitizeResponse(item);
 	},
 
+    /**
+     * Retrieves all items.
+     *
+     * @returns {Promise<Item>} The item corresponding to the provided ID.
+     * @throws {Error} If the items are not found.
+     */
+    async getAllItems() {
+		const items = await ItemModel.find();
+		if (!items) {
+			throw new Error('Item not found');
+		}
+		return items.map(item => sanitizeResponse(item));
+	},
 }
