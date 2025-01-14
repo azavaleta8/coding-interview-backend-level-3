@@ -35,12 +35,12 @@ if (!MONGODB_URI || !MONGODB_URI_TEST) {
  */
 const connectToDatabase = async (test = false): Promise<void> => {
     try {
-		if(test){
-			await mongoose.connect(MONGODB_URI_TEST);
-		}else{
-			await mongoose.connect(MONGODB_URI);
-			console.log('MongoDB initialized successfully:', mongoose.connection.host);
-		}
+        if(test){
+            await mongoose.connect(MONGODB_URI_TEST);
+        }else{
+            await mongoose.connect(MONGODB_URI);
+            console.log('MongoDB initialized successfully:', mongoose.connection.host);
+        }
 
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
@@ -107,59 +107,59 @@ let hapiServer: Server | null = null;
 
 // Initialize server for test
 export const initializeServer = async (): Promise<Hapi.Server> => {
-  // Close existing servers if they are running
-  if (expressServer) {
-    expressServer.close(() => {
-      // console.log('Existing Express server closed.');
-    });
-  }
-  if (hapiServer) {
-    await hapiServer.stop();
+    // Close existing servers if they are running
+    if (expressServer) {
+        expressServer.close(() => {
+            // console.log('Existing Express server closed.');
+        });
+    }
+    if (hapiServer) {
+        await hapiServer.stop();
     // console.log('Existing Hapi server stopped.');
-  }
+    }
 
-  // Create and start the Express application
-  const expressApp = createApp();
-  expressServer = expressApp.listen(PORT, HOST, () => {
+    // Create and start the Express application
+    const expressApp = createApp();
+    expressServer = expressApp.listen(PORT, HOST, () => {
     // console.log(`Express server running on http://${HOST}:${PORT}`);
-  });
+    });
 
-  // Connect to the MongoDB database
-  await connectToDatabase(true);
+    // Connect to the MongoDB database
+    await connectToDatabase(true);
 
-  // Clean the database before running tests
-  await cleanDatabase();
+    // Clean the database before running tests
+    await cleanDatabase();
 
-  // Create a new Hapi server
-  hapiServer = Hapi.server({
-    port: PORT + 1, // Use a different port for Hapi to avoid conflict
-    host: HOST,
-  });
+    // Create a new Hapi server
+    hapiServer = Hapi.server({
+        port: PORT + 1, // Use a different port for Hapi to avoid conflict
+        host: HOST,
+    });
 
-  // Proxy middleware to forward requests from Hapi to Express
-  hapiServer.route({
-    method: '*', // Match all HTTP methods
-    path: '/{any*}', // Match all routes
-    handler: async (request, h) => {
-      try {
-        // Extract method, URL, and payload from the Hapi request
-        const method = request.method.toLowerCase();
-        const url = request.path.toString();
-        const payload = request.payload as object;
+    // Proxy middleware to forward requests from Hapi to Express
+    hapiServer.route({
+        method: '*', // Match all HTTP methods
+        path: '/{any*}', // Match all routes
+        handler: async (request, h) => {
+            try {
+                // Extract method, URL, and payload from the Hapi request
+                const method = request.method.toLowerCase();
+                const url = request.path.toString();
+                const payload = request.payload as object;
 
-        // Use Supertest to make the request to the Express API
-        const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
+                // Use Supertest to make the request to the Express API
+                const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
 
-        // Return the response from Express to the Hapi client
-        return h.response(response.body).code(response.status);
-      } catch (error) {
-        // Log the error and return a 500 Internal Server Error response
-        console.error('Error handling request:', error);
-        return h.response({ error: 'Internal Server Error' }).code(500);
-      }
-    },
-  });
+                // Return the response from Express to the Hapi client
+                return h.response(response.body).code(response.status);
+            } catch (error) {
+                // Log the error and return a 500 Internal Server Error response
+                console.error('Error handling request:', error);
+                return h.response({ error: 'Internal Server Error' }).code(500);
+            }
+        },
+    });
 
-  // Return the initialized Hapi server
-  return hapiServer;
+    // Return the initialized Hapi server
+    return hapiServer;
 };

@@ -36,12 +36,12 @@ export const ItemService = {
      * @throws {Error} If the item is not found.
      */
     async getItemById(id : string) {
-		const item = await ItemModel.findById(id);
-		if (!item) {
-			throw new Error('Item not found');
-		}
-		return sanitizeResponse(item);
-	},
+        const item = await ItemModel.findById(id);
+        if (!item) {
+            throw new Error('Item not found');
+        }
+        return sanitizeResponse(item);
+    },
 
     /**
      * Retrieves all items.
@@ -50,12 +50,12 @@ export const ItemService = {
      * @throws {Error} If the items are not found.
      */
     async getAllItems() {
-		const items = await ItemModel.find();
-		if (!items) {
-			throw new Error('Item not found');
-		}
-		return items.map(item => sanitizeResponse(item));
-	},
+        const items = await ItemModel.find();
+        if (!items) {
+            throw new Error('Item not found');
+        }
+        return items.map(item => sanitizeResponse(item));
+    },
 
     /**
      * Deletes an item by its ID.
@@ -65,10 +65,10 @@ export const ItemService = {
      * @throws {Error} If the item is not found.
      */
     async deleteItem(id: string) {
-		const item = await ItemModel.findByIdAndDelete(id);
-		if (!item) {
-			throw new Error('Item not found');
-		}
-		return { message: 'Item deleted successfully' };
-	},
+        const item = await ItemModel.findByIdAndDelete(id);
+        if (!item) {
+            throw new Error('Item not found');
+        }
+        return { message: 'Item deleted successfully' };
+    },
 }

@@ -35,16 +35,16 @@ export const createItemController = async (req: Request, res: Response, next: Ne
  * @throws Will throw an error if the item is not found or if there is an unexpected error.
  */
 export const getItemByIdController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-	try {
-		const item = await ItemService.getItemById(req.params.id);
-		res.status(StatusCodes.OK).json(item);
-	} catch (error) {
-		if (error instanceof Error && error.message === 'Item not found') {
-			res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
-		} else {
-			next(error);
-		}
-	}
+    try {
+        const item = await ItemService.getItemById(req.params.id);
+        res.status(StatusCodes.OK).json(item);
+    } catch (error) {
+        if (error instanceof Error && error.message === 'Item not found') {
+            res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
+        } else {
+            next(error);
+        }
+    }
 };
 
 /**
@@ -58,16 +58,16 @@ export const getItemByIdController = async (req: Request, res: Response, next: N
  * @throws Will throw an error if the items is not found or if there is an unexpected error.
  */
 export const getItemsController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-	try {
-		const items = await ItemService.getAllItems();
-		res.status(StatusCodes.OK).json(items);
-	} catch (error) {
-		if (error instanceof Error && error.message === 'Items not found') {
-			res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
-		} else {
-			next(error);
-		}
-	}
+    try {
+        const items = await ItemService.getAllItems();
+        res.status(StatusCodes.OK).json(items);
+    } catch (error) {
+        if (error instanceof Error && error.message === 'Items not found') {
+            res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
+        } else {
+            next(error);
+        }
+    }
 };
 
 /**
@@ -81,14 +81,14 @@ export const getItemsController = async (req: Request, res: Response, next: Next
  * @throws Will throw an error if the item is not found or if there is a server error.
  */
 export const deleteItemController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-	try {
-		const item = await ItemService.deleteItem(req.params.id);
-		res.status(StatusCodes.NO_CONTENT).json(item);
-	} catch (error) {
-		if (error instanceof Error && error.message === 'Item not found') {
-			res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
-		} else {
-			next(error);
-		}
-	}
+    try {
+        const item = await ItemService.deleteItem(req.params.id);
+        res.status(StatusCodes.NO_CONTENT).json(item);
+    } catch (error) {
+        if (error instanceof Error && error.message === 'Item not found') {
+            res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
+        } else {
+            next(error);
+        }
+    }
 };

@@ -19,11 +19,11 @@ export const validatePOST = [
 ];
 
 export const validateItemId = [
-	param('id')
-    .notEmpty()
-    .isString()
-    .withMessage('Invalid Item ID'),
-	async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    param('id')
+        .notEmpty()
+        .isString()
+        .withMessage('Invalid Item ID'),
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
