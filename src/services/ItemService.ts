@@ -23,7 +23,7 @@ export const ItemService = {
      * @param itemPayload - The payload containing item details.
      * @returns The newly created item.
      */
-    async createItem (itemPayload : any) {
+    async createItem (itemPayload : Partial<Item>) {
         const newItem : Item = await ItemModel.create(itemPayload);
         return sanitizeResponse(newItem);
     },
@@ -55,6 +55,22 @@ export const ItemService = {
             throw new Error('Item not found');
         }
         return items.map(item => sanitizeResponse(item));
+    },
+
+    /**
+     * Updates an item by its ID.
+     *
+     * @param {string} id - The ID of the item to update.
+     * @param {Partial<Item>} updateData - The data to update the item with.
+     * @returns {Promise<Item>} The updated item.
+     * @throws {Error} If the item is not found.
+     */
+    async updateItem(id: string, updateData: Partial<Item>) {
+        const item = await ItemModel.findByIdAndUpdate(id, updateData, { new: true });
+        if (!item) {
+            throw new Error('Item not found');
+        }
+        return sanitizeResponse(item);
     },
 
     /**

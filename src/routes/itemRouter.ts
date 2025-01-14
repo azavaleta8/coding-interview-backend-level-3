@@ -1,5 +1,5 @@
 import express from 'express';
-import { createItemController, deleteItemController, getItemByIdController,getItemsController} from '../controllers/itemController';
+import { createItemController, deleteItemController, getItemByIdController,getItemsController, updateItemController} from '../controllers/itemController';
 import { validateItemId, validatePOST } from '../validators/itemValidation';
 
 const router = express.Router();
@@ -71,6 +71,44 @@ router.get('/items/:id', validateItemId, getItemByIdController);
  *         description: Item not found
  */
 router.get('/items', getItemsController);
+
+/**
+ * @swagger
+ * /items/{id}:
+ *   put:
+ *     summary: Update a item
+ *     tags: [Items]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+*             type: object
+*             required:
+*               - name
+*               - price
+*             properties:
+*               name:
+*                 type: string
+*                 example: Item 1
+*               price:
+*                 type: number
+*                 example: 12
+ *     responses:
+ *       200:
+ *         description: Item updated successfully
+ *       404:
+ *         description: Question not found
+ *       422:
+ *         description: Validation error
+ */
+router.put('/items/:id', validateItemId, validatePOST, updateItemController);
 
 /**
  * @swagger
