@@ -1,34 +1,124 @@
-# Bienvenido al coding-interview-backend-level-3
+# Dorado - API RESTful
 
-## Descripción
-Este proyecto es una API REST que permite realizar operaciones CRUD sobre una entidad de tipo `Item`.
+Este proyecto implementa una API RESTful para la gestión de ítems. La API permite crear, leer, actualizar y eliminar ítems.
 
-La entidad tiene 3 campos: `id`, `name` y `price`.
+## Configuracion y Ejecucion del Proyecto
 
-Tu tarea es completar la implementación de toda la funcionalidad de forma tal de que los tests e2e pasen exitosamente.
+### Prerrequisitos
 
-### Que puedes hacer: 
-- ✅ Modificar el código fuente y agregar nuevas clases, métodos, campos, etc.
-- ✅ Cambiar dependencias, agregar nuevas, etc.
-- ✅ Modificar la estructura del proyecto (/src/** es todo tuyo)
-- ✅ Elegir una base de datos
-- ✅ Elegir un framework web
-- ✅ Cambiar la definición del .devContainer
+- Node.js (v14 o superior)
+- MongoDB
 
+### Instalacion
 
-### Que **no** puedes hacer:
-- ❌ No puedes modificar el archivo original /e2e/index.test.ts (pero puedes crear otros e2e test si lo deseas)
-- ❌ El proyecto debe usar Typescript 
-- ❌ Estresarte 🤗
+1. Clonar el repositorio:
 
+   ```
+   git clone https://github.com/azavaleta8/coding-interview-backend-level-3.git
+   cd coding-interview-backend-level-3
+   ```
 
-## Pasos para comenzar
-1. Haz un fork usando este repositorio como template
-2. Clona el repositorio en tu máquina
-3. Realiza los cambios necesarios para que los tests pasen
-4. Sube tus cambios a tu repositorio
-5. Avísanos que has terminado
-6. ???
-7. PROFIT
+2. Instalar dependencias:
 
-### Cualquier duda contactarme a https://www.linkedin.com/in/andreujuan/
+   ```
+   npm install
+   ```
+
+3. Crear un archivo `.env` en la raiz del proyecto y configurar las variables de entorno necesarias (ver seccion de Variables de Entorno).
+
+4. Iniciar el servidor:
+   ```
+   npm run dev
+   ```
+
+El servidor estara corriendo en `http://localhost:3000` (o el puerto especificado en las variables de entorno).
+
+### Ejecución con Docker Compose
+
+Para ejecutar el proyecto utilizando Docker Compose, sigue estos pasos:
+
+1. Asegúrate de tener Docker y Docker Compose instalados en tu sistema.
+
+2. Construye y levanta los contenedores:
+
+   ```
+   docker-compose up --build
+   ```
+
+El servidor estará corriendo en `http://localhost:3000` (o el puerto especificado en las variables de entorno).
+
+## Estructura del Proyecto y Decisiones de Diseño
+
+```
+/src
+  /config
+  /controllers
+  /middlewares
+  /models
+  /routes
+  /services
+  /types
+  /utils
+  /validators
+/e2e
+```
+
+### Arquitectura
+
+- Se implemento una arquitectura en capas (rutas, controladores, servicios, modelos).
+- Se utilizo el patron repositorio para el acceso a datos, encapsulando la logica de la base de datos en los servicios.
+
+## Ejecucion de Tests
+
+Para ejecutar los tests:
+
+```
+npm test
+```
+
+Para ejecutar los tests con cobertura:
+
+## Variables de Entorno
+
+Crear un archivo `.env` en la raiz del proyecto con las siguientes variables: (.env expuesto con propositos demostrativos)
+
+```
+NODE_ENV =dev
+HOST=localhost
+PORT=3000
+MONGODB_URI=mongodb+srv://abelzavaleta08:LM144a2KgXkgmwNX@cluster0.0kcpi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI_TEST=mongodb+srv://abelzavaleta08:azavaleta@cluster0.0na6s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+```
+
+## Endpoints de la API
+
+Documentacion completa de la API disponible en Swagger UI:
+
+- DEV: `http://localhost:3000/api-docs`
+- PROD: `https://coding-interview-backend-level-3.onrender.com/api-docs/`
+
+Endpoints principales:
+
+### Ping:
+
+- GET /ping
+  - Descripción: Obtiene status del servidor.
+
+### Items:
+
+- POST /items
+  - Descripción: Crea un nuevo ítem.
+- GET /items
+  - Descripción: Obtiene la lista de todos los ítems.
+- GET /items/:id
+  - Descripción: Obtiene detalles de un ítem específico.
+- PUT /items/:id
+  - Descripción: Actualiza la información de un ítem.
+- DELETE /items/:id
+  - Descripción: Elimina un ítem del sistema.
+
+## Buenas Practicas Implementadas
+
+- Uso de async/await para manejar operaciones asincronas.
+- Implementacion de logging para facilitar el debugging y monitoreo.
+- Uso de ESLint para mantener un estilo de codigo consistente.
