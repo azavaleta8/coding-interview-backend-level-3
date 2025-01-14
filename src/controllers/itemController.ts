@@ -69,3 +69,26 @@ export const getItemsController = async (req: Request, res: Response, next: Next
 		}
 	}
 };
+
+/**
+ * Controller to handle the deletion of an item.
+ *
+ * @param req - The request object, containing the item ID in the parameters.
+ * @param res - The response object, used to send the status and JSON response.
+ * @param next - The next middleware function in the stack.
+ * @returns A promise that resolves to void.
+ *
+ * @throws Will throw an error if the item is not found or if there is a server error.
+ */
+export const deleteItemController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		const item = await ItemService.deleteItem(req.params.id);
+		res.status(StatusCodes.NO_CONTENT).json(item);
+	} catch (error) {
+		if (error instanceof Error && error.message === 'Item not found') {
+			res.status(StatusCodes.NOT_FOUND).json({ message: error.message });
+		} else {
+			next(error);
+		}
+	}
+};

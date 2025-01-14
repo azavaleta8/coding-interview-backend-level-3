@@ -56,4 +56,19 @@ export const ItemService = {
 		}
 		return items.map(item => sanitizeResponse(item));
 	},
+
+    /**
+     * Deletes an item by its ID.
+     *
+     * @param {string} id - The ID of the item to be deleted.
+     * @returns {Promise<{ message: string }>} A promise that resolves to an object containing a success message.
+     * @throws {Error} If the item is not found.
+     */
+    async deleteItem(id: string) {
+		const item = await ItemModel.findByIdAndDelete(id);
+		if (!item) {
+			throw new Error('Item not found');
+		}
+		return { message: 'Item deleted successfully' };
+	},
 }

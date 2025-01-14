@@ -1,5 +1,5 @@
 import express from 'express';
-import { createItemController, getItemByIdController,getItemsController} from '../controllers/itemController';
+import { createItemController, deleteItemController, getItemByIdController,getItemsController} from '../controllers/itemController';
 import { validateItemId, validatePOST } from '../validators/itemValidation';
 
 const router = express.Router();
@@ -72,5 +72,26 @@ router.get('/items/:id', validateItemId, getItemByIdController);
  */
 router.get('/items', getItemsController);
 
+/**
+ * @swagger
+ * /items/{id}:
+ *   delete:
+ *     summary: Delete item by ID
+ *     tags: [Items]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Item deleted succefully
+ *       404:
+ *         description: Item not found
+ *       422:
+ *         description: Unprocessable Entity
+ */
+router.delete('/items/:id', validateItemId, deleteItemController);
 
 export default router;
