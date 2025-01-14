@@ -4,7 +4,9 @@ import createApp from './config/app';
 import Hapi, { Server } from '@hapi/hapi';
 import { hapiToExpressHelper } from './utils/hapiToExpressHelper';
 import { Response } from 'supertest';
+import { Server as ExpressServer} from 'http';
 
+ 
 // ENV
 dotenv.config();
 
@@ -81,44 +83,63 @@ export const startServer = async (): Promise<void> => {
  * to the Express server using the `hapiToExpressHelper` function.
  * 
  */
+
+// References to the servers
+let expressServer: ExpressServer | null = null;
+let hapiServer: Server | null = null;
+
+// Initialize server for test
 export const initializeServer = async (): Promise<Hapi.Server> => {
-    // Create and start the Express application
-    const expressApp = await createApp();
-    expressApp.listen(PORT, HOST, () => {});
-
-    // Connect to the MongoDB database
-    await connectToDatabase(true);
-
-    // Create a new Hapi server
-    const server: Server = Hapi.server({
-        port: PORT,
-        host: HOST,
+  // Close existing servers if they are running
+  if (expressServer) {
+    expressServer.close(() => {
+      console.log('Existing Express server closed.');
     });
+  }
+  if (hapiServer) {
+    await hapiServer.stop();
+    console.log('Existing Hapi server stopped.');
+  }
 
-    // Proxy middleware to forward requests from Hapi to Express
-    server.route({
-        method: '*', // Match all HTTP methods
-        path: '/{any*}', // Match all routes
-        handler: async (request, h) => {
-            try {
-                // Extract method, URL, and payload from the Hapi request
-                const method = request.method.toLowerCase();
-                const url = request.path.toString();
-                const payload = request.payload as object;
+  // Create and start the Express application
+  const expressApp = createApp();
+  expressServer = expressApp.listen(PORT, HOST, () => {
+    console.log(`Express server running on http://${HOST}:${PORT}`);
+  });
 
-                // Use Supertest to make the request to the Express API
-                const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
+  // Connect to the MongoDB database
+  await connectToDatabase(true);
 
-                // Return the response from Express to the Hapi client
-                return h.response(response.body).code(response.status);
-            } catch (error) {
-                // Log the error and return a 500 Internal Server Error response
-                console.error('Error handling request:', error);
-                return h.response({ error: 'Internal Server Error' }).code(500);
-            }
-        },
-    });
+  // Create a new Hapi server
+  hapiServer = Hapi.server({
+    port: PORT + 1, // Use a different port for Hapi to avoid conflict
+    host: HOST,
+  });
 
-    // Return the initialized Hapi server
-    return server;
+  // Proxy middleware to forward requests from Hapi to Express
+  hapiServer.route({
+    method: '*', // Match all HTTP methods
+    path: '/{any*}', // Match all routes
+    handler: async (request, h) => {
+      try {
+        // Extract method, URL, and payload from the Hapi request
+        const method = request.method.toLowerCase();
+        const url = request.path.toString();
+        const payload = request.payload as object;
+
+        // Use Supertest to make the request to the Express API
+        const response: Response = await hapiToExpressHelper(expressApp, method, url, payload);
+
+        // Return the response from Express to the Hapi client
+        return h.response(response.body).code(response.status);
+      } catch (error) {
+        // Log the error and return a 500 Internal Server Error response
+        console.error('Error handling request:', error);
+        return h.response({ error: 'Internal Server Error' }).code(500);
+      }
+    },
+  });
+
+  // Return the initialized Hapi server
+  return hapiServer;
 };
